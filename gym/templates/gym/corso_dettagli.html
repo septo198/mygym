@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dettagli corso{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <a href="{% url 'gym:corso-search' %}" class="btn btn-primary" style="margin-bottom: 10px; margin-top:10px;">Torna alla ricerca corsi</a>
+        <a href="#" class="btn btn-primary">Prenotati al corso</a>
+
+        <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.3)">
+                <p><strong>Nome corso: </strong>{{ corso.nome }}</p>
+                <p><strong>Costo corso: </strong>{{ corso.prezzo|floatformat:2 }}€</p>
+
+                <p><strong>Sedute settimanali: </strong>{{ corso.sedute_settimanali }}</p>
+                <p><strong>Descrizione: </strong></p>
+                <p>{{ corso.descrizione }}</p>
+        </div>
+
+    </div>
+
+{% endblock %}

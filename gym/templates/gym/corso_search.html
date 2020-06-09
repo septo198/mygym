@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Ricerca corso{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <h3>Ricerca un corso</h3>
+        <form  method="post">
+            {% csrf_token %}
+            <div class="container">
+                <div class="form-group">
+                    {{ form|crispy }}
+                    <input class="btn btn-success" type="submit" value="Cerca">
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            {% for corso in corsi %}
+
+
+            <div class="card col-mg-3" style="margin-bottom: 10px; width: 24%; margin-right: 0.5%; margin-left: 0.5%">
+                <img class="card-img-top" src="{{ corso.fotoURL }}" style="width: 100%; height: 100%">
+                <div class="card-body">
+                    <h6 class="card-title">{{ corso.nome }}</h6>
+                        <hr>
+                    <p class="card-text">{{ corso.descrizione }}</p>
+                    <p class="card-text">{{ corso.prezzo|floatformat:2 }}€</p>
+                    <a href="{% url 'gym:corso-dettagli' corso.id %}" class="btn btn-outline-secondary add-btn">Dettagli del corso</a>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}
