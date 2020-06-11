@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Registrati{% endblock %}
+
+{% block content %}
+
+    <div class="container card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary mb-1">Sign up</button>
+        </form>
+    </div>
+
+{% endblock %}

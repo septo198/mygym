@@ -13,23 +13,25 @@
             <div class="container">
                 <div class="form-group">
                     {{ form|crispy }}
-                    <input class="btn btn-success" type="submit" value="Cerca">
+                    <input class="btn btn-primary" type="submit" value="Cerca">
                 </div>
             </div>
         </form>
 
         <div class="row">
             {% for corso in corsi %}
-
-
             <div class="card col-mg-3" style="margin-bottom: 10px; width: 24%; margin-right: 0.5%; margin-left: 0.5%">
                 <img class="card-img-top" src="{{ corso.fotoURL }}" style="width: 100%; height: 100%">
                 <div class="card-body">
                     <h6 class="card-title">{{ corso.nome }}</h6>
-                        <hr>
+                    <hr>
                     <p class="card-text">{{ corso.descrizione }}</p>
                     <p class="card-text">{{ corso.prezzo|floatformat:2 }}€</p>
+                    <p class="card-text">{{ corso.posti_rimanenti }} posti rimanenti</p>
                     <a href="{% url 'gym:corso-dettagli' corso.id %}" class="btn btn-outline-secondary add-btn">Dettagli del corso</a>
+                    {% if logged_user.is_portinaio %}
+                        <a href="{% url 'gym:elimina-corso' corso.id %}" class="btn btn-danger mt-1">Elimina corso</a>
+                    {% endif %}
                 </div>
             </div>
 

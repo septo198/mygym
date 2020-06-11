@@ -1,4 +1,6 @@
-from django.urls import path
+from django.urls import path, include
+
+import gym
 from . import views
 
 app_name = "gym"
@@ -7,4 +9,19 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('corso_search', views.corso_search, name='corso-search'),
     path('corso_dettagli/<int:id>', views.corso_dettagli, name='corso-dettagli'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/signup/cliente', views.ClienteSignUpView.as_view(), name='cliente-signup'),
+    path('pt_page/', views.pt_page, name='pt-page'),
+    path('accounts/signup/pt', views.PtSignUpView.as_view(), name='pt-signup'),
+    path('logout/', views.logout, name='logout'),
+    path('dettagli_utente/<int:id>/', views.utente_details, name='utente-details'),
+    path('ricerca_pt/', views.ricerca_pt, name='ricerca-pt'),
+    path('ricerca_cliente/', views.ricerca_cliente, name='ricerca-cliente'),
+    path('aggiungi_corso/', views.aggiungi_corso, name='aggiungi-corso'),
+    path('iscrizione_corso/<int:id>', views.iscrizione_corso, name='iscrizione-corso'),
+    path('iscrizione_delete/<int:id>', views.iscrizione_delete, name='iscrizione-delete'),
+    path('elimina_corso/<int:id>', views.elimina_corso, name='elimina-corso'),
+    path('salda_iscrizione/<int:id>', views.salda_iscrizione, name='salda-iscrizione'),
+    path('iscrizione_prolunga_method/<int:id>', views.iscrizione_prolunga_method, name='iscrizione-prolunga-method'),
+    path('permesso_negato/', views.permesso_negato, name='permesso-negato'),
 ]

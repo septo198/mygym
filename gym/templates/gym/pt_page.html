@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sei un PT?{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <h4>Vuoi diventare un personal trainer presso la nostra palestra?</h4>
+        <a class="btn btn-primary" href="{% url 'gym:pt-signup' %}">Registrati</a>
+
+    </div>
+
+{% endblock %}

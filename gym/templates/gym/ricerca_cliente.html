@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+{% block title %}Ricerca cliente{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <h3>Ricerca un cliente</h3>
+        <form  method="post">
+            {% csrf_token %}
+            <div class="container">
+                <div class="form-group">
+                    {{ form|crispy }}
+                    <input class="btn btn-primary" type="submit" value="Cerca">
+                </div>
+            </div>
+        </form>
+
+        {% render_table table %}
+
+    </div>
+
+{% endblock %}

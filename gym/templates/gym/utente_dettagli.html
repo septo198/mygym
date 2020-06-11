@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Dettagli utente{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card" style="background: rgba(0, 0, 0, 0.3)">
+                    <img class="card-img-top" src="{{ user.foto_profiloURL }}" style="width: 100%; height: 100%">
+                    <div class="card-body">
+                        <p><strong>Nome: </strong>{{ user.first_name }}</p>
+                        <p><strong>Cognome: </strong>{{ user.last_name }}</p>
+                        <p><strong>Email: </strong>{{ user.email }}</p>
+                    </div>
+                </div>
+                <form method="post" action="{% url 'gym:utente-details' user.id %}" enctype="multipart/form-data" style="margin-top: 10px">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary mb-1">Aggiorna foto</button>
+                </form>
+            </div>
+
+            <div class="col-lg-9">
+
+
+                {% if user.is_cliente %}
+                    <h4>I miei corsi</h4>
+                    <table class="table table-striped table-bordered table-sm" data-toggle="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-sortable="true">Corso</th>
+                                <th>Scade il</th>
+                                <th>Prezzo/mese</th>
+                                <th>€ da saldare</th>
+                                <th style="width: 4%"></th>
+                                <th style="width: 4%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for iscrizione in iscrizioni %}
+                                <tr>
+                                    <td scope="row" >{{ iscrizione.corso.nome }}</td>
+                                    <td scope="row" >{{ iscrizione.data_scadenza }}</td>
+                                    <td scope="row" >{{ iscrizione.corso.prezzo }}€</td>
+                                    <td scope="row" >{{ iscrizione.costo_complessivo }}€</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal{{ iscrizione.id }}"">Prolunga</button>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-sm" href="{% url 'gym:iscrizione-delete' iscrizione.id %}">Elimina</a>
+                                    </td>
+                                    {% if logged_user.is_portinaio and iscrizione.pagato == False %}
+                                        <td>
+                                            <a class="btn btn-success btn-sm" href="{% url 'gym:salda-iscrizione' iscrizione.id %}">Salda</a>
+                                        </td>
+                                    {% elif logged_user.is_portinaio %}
+                                        <td>
+                                            Pagato
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                                <div class="modal fade" id="myModal{{ iscrizione.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog modal-full-height modal-bottom modal-notify" role="document">
+                                        <div class="modal-content">
+                                              <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Prolunga</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                              </div>
+                                            <form method="POST" action="{% url 'gym:iscrizione-prolunga-method' iscrizione.id %}" >
+                                              <div class="modal-body">
+                                                {% csrf_token %}
+                                                <p>Di quanti mesi?</p>
+                                                <input type="number" name="mesi">
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                                  <input type="submit" class="btn btn-info" value="Prolunga">
+                                              </div>
+                                            </form>
+                                        </div>
+                                  </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% elif user.is_pt %}
+                    <p>Sono un pt</p>
+                {% elif user.is_portinaio %}
+                    <hr>
+                    <p>Per saldare il <strong>debito di un cliente o modificarne i corsi</strong> cercalo qui:</p>
+                    <a href="{% url 'gym:ricerca-cliente' %}" class="btn btn-primary">Cerca un cliente</a>
+                    <hr>
+                    <p>Per <strong>controllare e/o modificare le disponibilità </strong>di un personal trainer cercalo qui:</p>
+                    <a href="{% url 'gym:ricerca-pt' %}" class="btn btn-primary">Cerca un personal trainer</a>
+                    <hr>
+                    <p>Per <strong>aggiungere un nuovo corso </strong>clicca qui:</p>
+                    <a href="{% url 'gym:aggiungi-corso' %}" class="btn btn-primary">Aggiungi un corso</a>
+                    <hr>
+                    <p>Per <strong>eliminare un corso </strong>clicca qui:</p>
+                    <a href="{% url 'gym:corso-search' %}" class="btn btn-primary">Elimina un corso</a>
+                    <hr>
+                {% endif %}
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+{% endblock %}

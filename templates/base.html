@@ -26,35 +26,52 @@
                     </li>
                 </ul>
 
-                {% if 'ciao' == 'ciao' %} <!--Controllo se l'utente è loggato-->
-
+                {% if user.is_authenticated %} <!--Controllo se l'utente è loggato-->
+                    <li class="nav-item navbar-nav">
+                        <a class="nav-link" href="#">Cerca scheda</a>
+                    </li>
+                    <li class="nav-item navbar-nav">
+                        <a class="nav-link" href="{% url 'gym:ricerca-pt' %}">Cerca PT</a>
+                    </li>
+                    {% if logged_user.is_portinaio %}
                         <li class="nav-item navbar-nav">
-                            <a class="nav-link" href="#">Cerca PT</a>
+                            <a class="nav-link" href="{% url 'gym:ricerca-cliente' %}">Cerca cliente</a>
                         </li>
-                        <li class="nav-item dropdown my-lg-0 navbar-nav">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Nome utente
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Profilo</a>
-                                <a class="dropdown-item" href="#">Log out</a>
-                            </div>
+                        <li class="nav-item navbar-nav">
+                            <a class="nav-link" href="{% url 'gym:aggiungi-corso' %}">Aggiungi corso</a>
                         </li>
+                    {% endif %}
+                    <li class="nav-item dropdown my-lg-0 navbar-nav">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ logged_user.username }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="margin-right: 0">
+                                <a class="dropdown-item" href="{% url 'gym:utente-details' logged_user.id %}">Profilo</a>
+                            {% if logged_user.is_pt %}
+                                <a class="dropdown-item" href="#">Le mie schede</a>
+                            {% endif %}
+                            <a class="dropdown-item" href="{% url 'gym:logout' %}">Log out</a>
+                        </div>
+                    </li>
                 {% else %}
                     <div>
-                        <a href="#" class="btn btn-warning">Login</a>
-                        <a href="#" class="btn btn-warning">Registrati</a>
+                        <li class="nav-item navbar-nav">
+                            <a class="nav-link" href="{% url 'gym:pt-page' %}">Sei un PT?</a>
+                            <a href="{% url 'gym:login' %}" class="btn btn-warning nav-link" style="">Login</a>
+                            <a href="{% url 'gym:cliente-signup' %}" class="btn btn-warning nav-link">Registrati</a>
+                        </li>
                     </div>
                 {% endif %}
             </div>
         </nav>
 
-        <div>
-            {% block content %} {% endblock %}
+        <div class="m-1">
+            {% block content %}{% endblock %}
         </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     </body>
 </html>

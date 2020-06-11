@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Permesso negato{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <center>
+            <h1>Non hai i permessi per visualizzare questa pagina.</h1>
+            <a href="{% url 'gym:home' %}" class="btn btn-primary">Torna alla home</a>
+        </center>
+
+    </div>
+
+{% endblock %}
