@@ -3,6 +3,11 @@
 body{
     /*background-color: blue;*/
     font-family: "Poppins" !important;
+    /*background: url('/static/images/background.jpg') 60% 0 no-repeat fixed;*/
+    width: 100%;
+    height: auto;
+    background-size: cover;
+    /*background-color: rgba(200,255,0,0.3);*/
 }
 
 .my-navbar {
@@ -48,4 +53,40 @@ body{
 	-webkit-box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
     -moz-box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
     box-shadow: -1px -3px 5px -2px rgba(214,214,214,1);
+}
+
+.table,
+.table tr,
+.table td {
+    background-color: white !important;
+}
+
+.calendar {
+  width: 98%;
+  margin: auto;
+  font-size: 13px;
+}
+
+.calendar tr, .calendar td {
+  border: 1px solid black;
+}
+
+.calendar th {
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.calendar td {
+  width: 200px;
+  height: 150px;
+  padding: 20px 0px 0px 5px;
+}
+
+.month {
+  font-size: 25px;
+}
+
+.date {
+  font-size: 16px;
 }

@@ -24,4 +24,12 @@ urlpatterns = [
     path('salda_iscrizione/<int:id>', views.salda_iscrizione, name='salda-iscrizione'),
     path('iscrizione_prolunga_method/<int:id>', views.iscrizione_prolunga_method, name='iscrizione-prolunga-method'),
     path('permesso_negato/', views.permesso_negato, name='permesso-negato'),
+    path('nuova_scheda/', views.nuova_scheda, name='nuova-scheda'),
+    path('elimina_scheda/<int:id>', views.elimina_scheda, name='elimina-scheda'),
+    path('dettagli_scheda/<int:id>', views.dettagli_scheda, name='dettagli-scheda'),
+    path('cerca_schede/', views.cerca_schede, name='cerca-schede'),
+    path('aggiungi_esercizi/<int:id>', views.aggiungi_esercizi, name='aggiungi-esercizi'),
+    path('elimina_esericizio/<int:id>', views.elimina_esercizio, name='elimina-esercizio'),
+    path('consulta_calendario/<int:id>/', views.CalendarView.as_view(), name='consulta-calendario'),
+    path('prenotazione/<int:pt_id>', views.prenotazione, name='prenotazione'),
 ]

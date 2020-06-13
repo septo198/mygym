@@ -28,10 +28,10 @@
 
                 {% if user.is_authenticated %} <!--Controllo se l'utente è loggato-->
                     <li class="nav-item navbar-nav">
-                        <a class="nav-link" href="#">Cerca scheda</a>
+                        <a class="nav-link" href="{% url 'gym:ricerca-pt' %}">Cerca PT</a>
                     </li>
                     <li class="nav-item navbar-nav">
-                        <a class="nav-link" href="{% url 'gym:ricerca-pt' %}">Cerca PT</a>
+                        <a class="nav-link" href="{% url 'gym:cerca-schede' %}">Cerca scheda</a>
                     </li>
                     {% if logged_user.is_portinaio %}
                         <li class="nav-item navbar-nav">
@@ -41,15 +41,17 @@
                             <a class="nav-link" href="{% url 'gym:aggiungi-corso' %}">Aggiungi corso</a>
                         </li>
                     {% endif %}
+                    {% if logged_user.is_pt %}
+                        <li class="nav-item navbar-nav">
+                            <a class="nav-link" href="{% url 'gym:nuova-scheda' %}">Aggiungi scheda</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item dropdown my-lg-0 navbar-nav">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ logged_user.username }}
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="margin-right: 0">
-                                <a class="dropdown-item" href="{% url 'gym:utente-details' logged_user.id %}">Profilo</a>
-                            {% if logged_user.is_pt %}
-                                <a class="dropdown-item" href="#">Le mie schede</a>
-                            {% endif %}
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="margin-right: 0">
+                            <a class="dropdown-item" href="{% url 'gym:utente-details' logged_user.id %}">Profilo</a>
                             <a class="dropdown-item" href="{% url 'gym:logout' %}">Log out</a>
                         </div>
                     </li>
@@ -65,7 +67,7 @@
             </div>
         </nav>
 
-        <div class="m-1">
+        <div class="mt-0 mb-1">
             {% block content %}{% endblock %}
         </div>
 

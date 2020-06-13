@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Nuova scheda{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-1">
+
+
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <center><button type="submit" class="btn btn-primary mb-1">Crea nuova scheda</button></center>
+            </form>
+    </div>
+
+{% endblock %}

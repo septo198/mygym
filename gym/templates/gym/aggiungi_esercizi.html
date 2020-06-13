@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Aggiungi esercizi alla scheda{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <p><strong>Scheda </strong>{{ scheda.nome }}</p>
+        <p><strong>Autore </strong>{{ scheda.autore }}</p>
+        <button type="button" class="btn btn-info btn-sm mb-2" data-toggle="modal" data-target="#myModal{{ scheda.id }}">Aggiungi esercizio</button>
+        <div class="modal fade" id="myModal{{ scheda.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-full-height modal-bottom modal-notify" role="document">
+                <div class="modal-content">
+                      <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Aggiungi esercizio</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                      </div>
+                    <form method="POST">
+                      <div class="modal-body">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                          <input type="submit" class="btn btn-info" value="Aggiungi">
+                      </div>
+                    </form>
+                </div>
+          </div>
+        </div>
+        <table class="table table-striped table-bordered table-sm" data-toggle="table">
+            <thead>
+                <tr>
+                    <th scope="col" data-sortable="true">Esercizio</th>
+                    <th>Ripetizioni</th>
+                    <th>Serie</th>
+                    <th>Recupero</th>
+                    <th style="width: 4%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for esercizio in esercizi %}
+                    <tr>
+                        <td scope="row" >{{ esercizio.nome_esercizio }}</td>
+                        <td scope="row" >{{ esercizio.ripetizioni }}</td>
+                        <td scope="row" >{{ esercizio.serie }}</td>
+                        <td scope="row" >{{ esercizio.recupero }} sec</td>
+                        <td>
+                            <a class="btn btn-danger btn-sm" href="{% url 'gym:elimina-esercizio' esercizio.id %}">Cancella</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,17 +1,23 @@
+import calendar
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
-from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django_tables2 import TemplateColumn, RequestConfig
+from django.views import generic
+from django.utils.safestring import mark_safe
 
 from .forms import *
 from .models import *
 from .decorators import *
+from .utils import *
 from django.db.models import Q
 from django.contrib.auth import login, user_logged_out
 from django.shortcuts import redirect
 from django.views.generic import CreateView
 import django_tables2 as tables
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 
 def home(request):
@@ -39,8 +45,12 @@ def corso_search(request):
 
 def corso_dettagli(request, id):
     corso = Corso.objects.get(id=id)
+    try:
+        iscrizione = Iscrizione.objects.get(cliente=request.user, corso=corso)
+    except Iscrizione.DoesNotExist:
+        iscrizione = None
     logged_user = request.user
-    context = {'corso': corso, 'logged_user': logged_user}
+    context = {'corso': corso, 'logged_user': logged_user, 'iscrizione': iscrizione}
     return render(request, 'gym/corso_dettagli.html', context)
 
 
@@ -100,6 +110,8 @@ def utente_details(request, id):
     user = User.objects.get(id=id)
     corsi = Corso.objects.all()
     iscrizioni = Iscrizione.objects.filter(cliente_id=user.id)
+    schede = Scheda.objects.filter(autore=user)
+    prenotazioni = Prenotazione.objects.all()
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, request.FILES)
         if form.is_valid():
@@ -109,7 +121,7 @@ def utente_details(request, id):
     else:
         form = UserUpdateForm()
     logged_user = request.user
-    context = {'user': user, 'iscrizioni': iscrizioni, 'corsi': corsi, 'logged_user': logged_user, 'form': form}
+    context = {'user': user, 'iscrizioni': iscrizioni, 'corsi': corsi, 'logged_user': logged_user, 'form': form, 'schede': schede}
     return render(request, 'gym/utente_dettagli.html', context)
 
 
@@ -266,3 +278,157 @@ def iscrizione_prolunga_method(request, id):
     iscrizione.save()
     return redirect('gym:utente-details', user.id)
 
+
+@login_required()
+@pt_required()
+def nuova_scheda(request):
+    if request.method == 'POST':
+        form = SchedaAddForm(request.POST)
+        if form.is_valid():
+            scheda = form.save(commit=False)
+            scheda.autore = request.user
+            scheda.save()
+            return redirect('gym:aggiungi-esercizi', id=scheda.id)
+    else:
+        form = SchedaAddForm()
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'form': form}
+    return render(request, 'gym/nuova_scheda.html', context)
+
+
+@login_required()
+@pt_required()
+def aggiungi_esercizi(request, id):
+    scheda = Scheda.objects.get(id=id)
+    esercizi = Esercizio.objects.filter(scheda_id=id)
+    if request.method == 'POST':
+        form = EsercizioAddForm(request.POST)
+        if form.is_valid():
+            esercizio = form.save(commit=False)
+            esercizio.scheda = scheda
+            esercizio.save()
+            return redirect('gym:aggiungi-esercizi', id)
+    else:
+        form = EsercizioAddForm()
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'scheda': scheda, 'esercizi': esercizi, 'form': form}
+    return render(request, 'gym/aggiungi_esercizi.html', context)
+
+
+@login_required()
+@pt_required()
+def elimina_esercizio(request, id):
+    esercizio = Esercizio.objects.get(id=id)
+    esercizio.delete()
+    return redirect('gym:aggiungi-esercizi', esercizio.scheda.id)
+
+
+@login_required()
+@pt_required()
+def elimina_scheda(request, id):
+    scheda = Scheda.objects.get(id=id)
+    scheda.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required()
+def dettagli_scheda(request, id):
+    scheda = Scheda.objects.get(id=id)
+    esercizi = Esercizio.objects.filter(scheda_id=id)
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'scheda': scheda, 'esercizi': esercizi}
+    return render(request, 'gym/dettagli_scheda.html', context)
+
+
+class SchedeTable(tables.Table):
+    class Meta:
+        model = Scheda
+        template_name = "django_tables2/bootstrap4.html"
+        fields = ("nome", "autore")
+        attrs = {"class": "table table-striped table-bordered sortable",
+                 "data-toggle": "table"
+                 }
+
+    detail = TemplateColumn(exclude_from_export=False, template_name='gym/apri_scheda.html', orderable=False,
+                            verbose_name='', )
+
+
+@login_required()
+def cerca_schede(request):
+    schede = Scheda.objects.all()
+    table = SchedeTable(schede)
+    RequestConfig(request, paginate={"per_page": 10}).configure(table)
+    if request.method == 'POST':
+        form = SchedeSearchForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['nome'] == form.cleaned_data['autore'] == '':
+                schede = schede
+            else:
+                schede = schede.filter(Q(nome__icontains=form.cleaned_data['nome'])&
+                                       Q(autore__username__icontains=form.cleaned_data['autore']))
+                table = SchedeTable(schede)
+    else:
+        form = SchedeSearchForm()
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'schede': schede, 'form': form, 'table': table}
+    return render(request, 'gym/cerca_schede.html', context)
+
+
+class CalendarView(generic.ListView):
+    model = Prenotazione
+    template_name = 'gym/calendar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # use today's date for the calendar
+        #d = get_date(self.request.GET.get('day', None))
+
+        d = get_date(self.request.GET.get('month', None))
+
+        # Instantiate our calendar class with today's year and date
+        cal = Calendar(d.year, d.month)
+
+        # Call the formatmonth method, which returns our calendar as a table
+        html_cal = cal.formatmonth(withyear=True)
+        context['logged_user'] = self.request.user
+        context['calendar'] = mark_safe(html_cal)
+        context['pt'] = User.objects.get(id=self.kwargs['id'])
+        context['prev_month'] = prev_month(d)
+        context['next_month'] = next_month(d)
+        return context
+
+def get_date(req_day):
+    if req_day:
+        year, month = (int(x) for x in req_day.split('-'))
+        return date(year, month, day=1)
+    return datetime.today()
+
+def prev_month(d):
+    first = d.replace(day=1)
+    prev_month = first - timedelta(days=1)
+    month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
+    return month
+
+def next_month(d):
+    days_in_month = calendar.monthrange(d.year, d.month)[1]
+    last = d.replace(day=days_in_month)
+    next_month = last + timedelta(days=1)
+    month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+    return month
+
+def prenotazione(request, pt_id):
+    if request.method == 'POST':
+        form = PrenotazioneAddForm(request.POST)
+        if form.is_valid():
+            prenotazione = form.save(commit=False)
+            prenotazione.cliente = Cliente.objects.get(user=request.user)
+            prenotazione.pt = Pt.objects.get(user_id=pt_id)
+            form.save()
+            return redirect('gym:consulta-calendario', id=pt_id)
+    else:
+        form = PrenotazioneAddForm()
+    pt = User.objects.get(id=pt_id)
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'form': form, 'pt': pt}
+    return render(request, 'gym/prenotazione.html', context)

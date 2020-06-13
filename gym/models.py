@@ -1,6 +1,11 @@
+from __future__ import unicode_literals
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
+from django.core.exceptions import ValidationError
+from django.urls import reverse
+
 
 class User(AbstractUser):
     is_cliente = models.BooleanField(default=False)
@@ -16,6 +21,7 @@ class User(AbstractUser):
             url = 'images/placeholder.png'
         return url
 
+
 class Cliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
@@ -25,6 +31,7 @@ class Pt(models.Model):
 
 class Portinaio(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+
 
 class Corso(models.Model):
     nome = models.CharField(max_length=100)
@@ -67,4 +74,26 @@ class Iscrizione(models.Model):
 
     class Meta:
         unique_together = ('corso', 'cliente',)
+
+
+class Scheda(models.Model):
+    nome = models.CharField(max_length=100)
+    autore = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class Esercizio(models.Model):
+    nome_esercizio = models.CharField(max_length=100)
+    ripetizioni = models.IntegerField(default=0)
+    serie = models.IntegerField(default=1)
+    recupero = models.IntegerField(default=30)
+    scheda = models.ForeignKey(Scheda, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class Prenotazione(models.Model):
+    title = models.CharField(max_length=100, default="")
+    description = models.TextField(default="")
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    pt = models.ForeignKey(Pt, on_delete=models.SET_NULL, null=True, blank=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
 

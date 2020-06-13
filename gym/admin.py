@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import *
@@ -19,9 +20,11 @@ class CustomUserAdmin(UserAdmin):
             raise forms.ValidationError("La mail selezionata è già esistente")
         return data
 
+
 admin.site.register(Cliente)
 admin.site.register(Corso)
 admin.site.register(Iscrizione)
 admin.site.register(Pt)
 admin.site.register(Portinaio)
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(Prenotazione)

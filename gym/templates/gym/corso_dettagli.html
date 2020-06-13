@@ -4,16 +4,27 @@
 
 {% block content %}
 
+    <div style="width: 100%; height: 30vh; background: url('/static/images/{{ corso.foto }}') no-repeat center; background-size: cover;">
+        <h2 style="color: white; text-align:center; padding-top: 12vh">{{ corso.nome }}</h2>
+    </div>
     <div class="container">
         <a href="{% url 'gym:corso-search' %}" class="btn btn-primary" style="margin-bottom: 10px; margin-top:10px;">Vai alla ricerca corsi</a>
-        {% if corso.posti_rimanenti > 0 and logged_user.is_cliente or logged_user.is_anonymous %}
-            <a href="{% url 'gym:iscrizione-corso' corso.id %}" class="btn btn-primary">Iscriviti al corso</a>
+        {% if corso.posti_rimanenti > 0 %}
+            {% if logged_user.is_cliente or logged_user.is_anonymous %}
+                {% if iscrizione == None %}
+                    <a href="{% url 'gym:iscrizione-corso' corso.id %}" class="btn btn-primary">Iscriviti al corso</a>
+                {% else %}
+                    <span>Sei già prenotato per questo corso</span>
+                {% endif %}
+            {% endif %}
         {% endif %}
+
         {% if logged_user.is_portinaio %}
             <a href="{% url 'gym:elimina-corso' corso.id %}" class="btn btn-danger">Elimina corso</a>
         {% endif %}
-
-        <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.3)">
+    </div>
+    <div class="container">
+        <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.1)">
                 <p><strong>Nome corso: </strong>{{ corso.nome }}</p>
                 <p><strong>Costo corso: </strong>{{ corso.prezzo|floatformat:2 }}€</p>
                 <p class="card-text"><strong>Posti rimanenti:</strong> {{ corso.posti_rimanenti }}</p>

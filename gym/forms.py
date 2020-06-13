@@ -1,4 +1,6 @@
 from django import forms
+from django.forms import DateInput
+
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -11,7 +13,7 @@ User = get_user_model()
 
 class CorsoForm(forms.Form):
     nome = forms.CharField(max_length=100, label='Nome corso', required=False, initial="")
-    prezzo_max = forms.FloatField(label='Prezzo massimo', required=False, initial=0)
+    prezzo_max = forms.FloatField(label='Prezzo massimo', required=False, initial=10000)
 
 class ClienteSignUpForm(UserCreationForm):
     foto_profilo = forms.ImageField()
@@ -102,5 +104,37 @@ class UserSearchForm(forms.ModelForm):
         model = User
         fields = ('first_name', 'last_name', 'email', )
 
+class SchedaAddForm(forms.ModelForm):
+    class Meta:
+        model = Scheda
+        fields = ('nome', )
+
+class SchedeSearchForm(forms.Form):
+    nome = forms.CharField(max_length=100, label='Nome scheda', required=False, initial="")
+    autore = forms.CharField(max_length=100, label='Nome autore', required=False, initial="")
+
+class EsercizioAddForm(forms.ModelForm):
+    class Meta:
+        model = Esercizio
+        fields = ('nome_esercizio', 'ripetizioni', 'serie', 'recupero', )
 
 
+class PrenotazioneAddForm(forms.ModelForm):
+    class Meta:
+        model = Prenotazione
+        # datetime-local is a HTML5 input type, format to make date time show on fields
+        widgets = {
+            'start_time': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%d %H:%M'),
+            'end_time': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%d %H:%M'),
+        }
+        labels = {
+            "start_time": "Ora di inizio",
+            "end_time": "Ora di fine"
+        }
+        fields = ('description', 'start_time', 'end_time')
+
+    #def __init__(self, *args, **kwargs):
+     #   super(PrenotazioneAddForm, self).__init__(*args, **kwargs)
+        #input_formats to parse HTML5 datetime-local input to datetime field
+      #  self.fields['start_time'].input_formats = ('%Y-%m-%dT%H:%M',)
+       # self.fields['end_time'].input_formats = ('%Y-%m-%dT%H:%M',)

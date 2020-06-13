@@ -1,0 +1,6 @@
+{% if logged_user == record.autore %}
+    <a class="btn btn-info btn-sm" href="{% url 'gym:aggiungi-esercizi' record.id %}">Apri scheda</a>
+    <a class="btn btn-danger btn-sm" href="{% url 'gym:elimina-scheda' record.id %}">Cancella scheda</a>
+{% else %}
+    <a class="btn btn-info btn-sm" href="{% url 'gym:dettagli-scheda' record.id %}">Apri scheda</a>
+{% endif %}
