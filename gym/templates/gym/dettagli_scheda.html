@@ -5,6 +5,8 @@
 {% block content %}
 
     <div class="container mt-1">
+        <!-- Template che visualizza una scheda e relativi esercizi -->
+        <a href="{% url 'gym:cerca-schede' %}" class="btn btn-primary">Torna alla ricerca delle schede</a>
         <p><strong>Scheda </strong>{{ scheda.nome }}</p>
         <p><strong>Autore </strong>{{ scheda.autore }}</p>
 

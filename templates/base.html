@@ -12,13 +12,13 @@
         <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
-
+        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="{% url 'gym:home' %}">MyGym</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+            <!-- Componenti navbar -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
@@ -26,14 +26,14 @@
                     </li>
                 </ul>
 
-                {% if user.is_authenticated %} <!--Controllo se l'utente è loggato-->
+                {% if user.is_authenticated %} <!-- Controllo se l'utente è loggato -->
                     <li class="nav-item navbar-nav">
                         <a class="nav-link" href="{% url 'gym:ricerca-pt' %}">Cerca PT</a>
                     </li>
                     <li class="nav-item navbar-nav">
                         <a class="nav-link" href="{% url 'gym:cerca-schede' %}">Cerca scheda</a>
                     </li>
-                    {% if logged_user.is_portinaio %}
+                    {% if logged_user.is_portinaio %} <!-- In baso al tipo di utente mostro link diversi -->
                         <li class="nav-item navbar-nav">
                             <a class="nav-link" href="{% url 'gym:ricerca-cliente' %}">Cerca cliente</a>
                         </li>
@@ -46,6 +46,7 @@
                             <a class="nav-link" href="{% url 'gym:nuova-scheda' %}">Aggiungi scheda</a>
                         </li>
                     {% endif %}
+                    <!-- Dropdown comune a tutti gli utenti -->
                     <li class="nav-item dropdown my-lg-0 navbar-nav">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ logged_user.username }}
@@ -56,7 +57,7 @@
                         </div>
                     </li>
                 {% else %}
-                    <div>
+                    <div>   <!-- In caso non sia loggato do la possibilità di loggarsi o registrarsi come pt o cliente -->
                         <li class="nav-item navbar-nav">
                             <a class="nav-link" href="{% url 'gym:pt-page' %}">Sei un PT?</a>
                             <a href="{% url 'gym:login' %}" class="btn btn-warning nav-link" style="">Login</a>
@@ -67,6 +68,7 @@
             </div>
         </nav>
 
+        <!-- Blocco contenuto -->
         <div class="mt-0 mb-1">
             {% block content %}{% endblock %}
         </div>

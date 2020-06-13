@@ -4,11 +4,13 @@
 {% block title %}Aggiungi esercizi alla scheda{% endblock %}
 
 {% block content %}
-
+    <!-- Template per l'aggiunta di un esercizio tramite modal ad una scheda di allenamento -->
     <div class="container">
         <p><strong>Scheda </strong>{{ scheda.nome }}</p>
         <p><strong>Autore </strong>{{ scheda.autore }}</p>
+        <!-- Pulsante attivazione modal -->
         <button type="button" class="btn btn-info btn-sm mb-2" data-toggle="modal" data-target="#myModal{{ scheda.id }}">Aggiungi esercizio</button>
+        <!-- Modal -->
         <div class="modal fade" id="myModal{{ scheda.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-full-height modal-bottom modal-notify" role="document">
                 <div class="modal-content">
@@ -18,6 +20,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                       </div>
+                    <!-- Inserimento dati -->
                     <form method="POST">
                       <div class="modal-body">
                         {% csrf_token %}
@@ -31,6 +34,7 @@
                 </div>
           </div>
         </div>
+        <!-- Elenco esercizi in forma tabellare -->
         <table class="table table-striped table-bordered table-sm" data-toggle="table">
             <thead>
                 <tr>
@@ -48,7 +52,7 @@
                         <td scope="row" >{{ esercizio.ripetizioni }}</td>
                         <td scope="row" >{{ esercizio.serie }}</td>
                         <td scope="row" >{{ esercizio.recupero }} sec</td>
-                        <td>
+                        <td>    <!-- Possibilità di rimuovere un esercizio -->
                             <a class="btn btn-danger btn-sm" href="{% url 'gym:elimina-esercizio' esercizio.id %}">Cancella</a>
                         </td>
                     </tr>

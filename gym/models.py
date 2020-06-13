@@ -2,11 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from datetime import datetime
-from django.core.exceptions import ValidationError
-from django.urls import reverse
+from datetime import datetime, date
 
-
+#Classe utente personalizzata a cui fanno riferimento i 3 utenti loggati che possono usare il sito
 class User(AbstractUser):
     is_cliente = models.BooleanField(default=False)
     is_pt = models.BooleanField(default=False)
@@ -27,12 +25,11 @@ class Cliente(models.Model):
 
 class Pt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    #dati_reperibilità
 
 class Portinaio(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
-
+#Classe di un corso a cui un cliente si può iscrivere
 class Corso(models.Model):
     nome = models.CharField(max_length=100)
     prezzo = models.FloatField(default=0)
@@ -55,6 +52,7 @@ class Corso(models.Model):
             url = 'images/placeholder.png'
         return url
 
+    #Ridefinisco save per aggiornare automaticamente i posti rimanenti
     def save(self, *args, **kwargs):
         if self.posti_rimanenti is None:
             self.posti_rimanenti = self.iscritti_max
@@ -62,7 +60,7 @@ class Corso(models.Model):
             self.posti_rimanenti = self.iscritti_max - self.iscritti_attuali
         super(Corso, self).save(*args, **kwargs)
 
-
+#Classe che tiene traccia di quale cliente si è iscritto a quale corso
 class Iscrizione(models.Model):
     cliente = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     corso = models.ForeignKey(Corso, on_delete=models.SET_NULL, null=True, blank=True)
@@ -75,12 +73,12 @@ class Iscrizione(models.Model):
     class Meta:
         unique_together = ('corso', 'cliente',)
 
-
+#Schede che un personal trainer può creare
 class Scheda(models.Model):
     nome = models.CharField(max_length=100)
     autore = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
-
+#Esericizi che un personal trainer può aggiungere alla scheda di allenamento
 class Esercizio(models.Model):
     nome_esercizio = models.CharField(max_length=100)
     ripetizioni = models.IntegerField(default=0)
@@ -88,12 +86,11 @@ class Esercizio(models.Model):
     recupero = models.IntegerField(default=30)
     scheda = models.ForeignKey(Scheda, on_delete=models.SET_NULL, null=True, blank=True)
 
-
+#Prenotazione effettuabile sul calendario di un personal trainer
 class Prenotazione(models.Model):
-    title = models.CharField(max_length=100, default="")
-    description = models.TextField(default="")
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    date = models.DateField(default=date.today())
+    start_time = models.TimeField()
+    end_time = models.TimeField()
     pt = models.ForeignKey(Pt, on_delete=models.SET_NULL, null=True, blank=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
 

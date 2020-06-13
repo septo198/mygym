@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from calendar import HTMLCalendar
 from .models import *
 
+#Definisco la classe del mio calendario del pt e come verrà strutturato nel template (insieme alle prenotazioni)
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None):
         self.year = year
@@ -11,10 +12,10 @@ class Calendar(HTMLCalendar):
     # formats a day as a td
     # filter events by day
     def formatday(self, day, events):
-        events_per_day = events.filter(start_time__day=day)
+        events_per_day = events.filter(date__day=day)
         d = ''
         for event in events_per_day:
-            d += f'<li>{event.cliente.user.username}: {event.start_time.replace(tzinfo=None).strftime("%H:%M")} - {event.end_time.replace(tzinfo=None, second=0).strftime("%H:%M")}</li>'
+            d += f'<li>{event.cliente.user.username}: {event.start_time.strftime("%H:%M")} - {event.end_time.strftime("%H:%M")}</li>'
 
         if day != 0:
             return f"<td><span class='date'>{day}</span><ul> {d} </ul></td>"
@@ -30,7 +31,7 @@ class Calendar(HTMLCalendar):
     # formats a month as a table
     # filter events by year and month
     def formatmonth(self, withyear=True):
-        events = Prenotazione.objects.filter(start_time__year=self.year, start_time__month=self.month)
+        events = Prenotazione.objects.filter(date__year=self.year, date__month=self.month)
 
         cal = f'<table border="0" cellpadding="0" cellspacing="0" class="calendar">\n'
         cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'

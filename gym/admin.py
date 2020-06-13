@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import *
 from .forms import *
 
-
+#Amministratore per il mio utente personalizzato
 class CustomUserAdmin(UserAdmin):
     add_form = UserCreationForm
     add_fieldsets = (

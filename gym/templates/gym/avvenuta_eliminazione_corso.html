@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Corso cancellato{% endblock %}
+
+{% block content %}
+    <!-- Template che indica la buona cancellazione di un corso -->
+    <div style="width: 100%; height: 40vh; background: url('/static/images/clouds.jpg') no-repeat center; background-size: cover;">
+        <h1 style="color: white; text-align:center; padding-top: 14vh">Corso cancellato con successo</h1>
+    </div>
+    <div class="container mt-2">
+
+        <center>
+            <a href="{% url 'gym:corso-search' %}" class="btn btn-primary">Torna alla ricerca dei corsi</a>
+        </center>
+
+    </div>
+
+{% endblock %}

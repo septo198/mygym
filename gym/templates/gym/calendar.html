@@ -16,7 +16,6 @@
         .btn {
           outline: none;
           color: black;
-          background-color: transparent;
           box-shadow: 0 0 0 0;
         }
 
@@ -24,13 +23,16 @@
           margin: 15px;
         }
     </style>
-
+    <!-- Template del calendario di un pt -->
     <div class="container mt-1">
         <h5 style="text-align: center">Calendario del personal trainer {{ pt.first_name }} {{ pt.last_name }}</h5>
         <div class="clearfix">
             <a class="btn btn-info left" href="{% url 'gym:consulta-calendario' pt.id %}?{{ prev_month }}"> Previous Month </a>
             <a class="btn btn-info right" href="{% url 'gym:consulta-calendario' pt.id %}?{{ next_month }}"> Next Month </a>
-            <a class="btn btn-info right" href="{% url 'gym:prenotazione' pt.id %}" style="margin-right: 10px"> Aggiungi prenotazione </a>
+            {% if logged_user.is_cliente %}
+                <!-- Se sei un cliente puoi aggiungere una tua prenotazione -->
+                <a class="btn btn-info right" href="{% url 'gym:prenotazione' pt.id %}" style="margin-right: 10px"> Aggiungi prenotazione </a>
+            {% endif %}
         </div>
         {{ calendar }}
     </div>

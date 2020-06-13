@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 
 import gym
@@ -21,6 +22,7 @@ urlpatterns = [
     path('iscrizione_corso/<int:id>', views.iscrizione_corso, name='iscrizione-corso'),
     path('iscrizione_delete/<int:id>', views.iscrizione_delete, name='iscrizione-delete'),
     path('elimina_corso/<int:id>', views.elimina_corso, name='elimina-corso'),
+    path('avvenuta_eliminazione_corso/', views.avvenuta_eliminazione_corso, name='avvenuta-eliminazione-corso'),
     path('salda_iscrizione/<int:id>', views.salda_iscrizione, name='salda-iscrizione'),
     path('iscrizione_prolunga_method/<int:id>', views.iscrizione_prolunga_method, name='iscrizione-prolunga-method'),
     path('permesso_negato/', views.permesso_negato, name='permesso-negato'),
@@ -30,6 +32,6 @@ urlpatterns = [
     path('cerca_schede/', views.cerca_schede, name='cerca-schede'),
     path('aggiungi_esercizi/<int:id>', views.aggiungi_esercizi, name='aggiungi-esercizi'),
     path('elimina_esericizio/<int:id>', views.elimina_esercizio, name='elimina-esercizio'),
-    path('consulta_calendario/<int:id>/', views.CalendarView.as_view(), name='consulta-calendario'),
+    path('consulta_calendario/<int:id>/', login_required(views.CalendarView.as_view()), name='consulta-calendario'),
     path('prenotazione/<int:pt_id>', views.prenotazione, name='prenotazione'),
 ]
