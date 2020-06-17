@@ -14,17 +14,18 @@ Se non ancora presente, installare python 3.7
 Clonare la repository
 > git clone https://github.com/septo198/mygym.git
 
-Installare pipenv
-> pip3 install pipenv
-
 Spostarsi nella cartella ./mygym/
 > cd ./mygym/
 
-Installare i pacchetti richiesti per il funzionamento
-> pipenv install -r requirements.txt
+Creare virtual env ed attivarlo
+> python -m virtualenv venv
 
-Infine aprire la shell ed avviare il server
-> pipenv shell
+> source venv/bin/activate
+
+Installare i pacchetti richiesti per il funzionamento
+> pip install -r requirements.txt
+
+Infine avviare il server
 > python manage.py runserver
 
 Per eseguire i test
