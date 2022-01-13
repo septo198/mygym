@@ -3,7 +3,7 @@ Django==3.0.7
 django-crispy-forms==1.9.1
 django-filter==2.3.0
 django-tables2==2.3.1
-Pillow==7.1.2
+Pillow==9.0.0
 pytz==2020.1
 reverse==0.1.0
 sqlparse==0.3.1
